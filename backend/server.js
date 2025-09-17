@@ -7,9 +7,9 @@ const app = express();
 app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 
-// Use session for admin login
+// Session for admin
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'tumisecret',
+  secret: process.env.SESSION_SECRET || 'tumicodesSecret123',
   resave: false,
   saveUninitialized: true,
 }));
@@ -32,7 +32,6 @@ app.post("/register", (req, res) => {
   channels.push(channel);
 
   const voteLink = `https://your-frontend-site.netlify.app/vote.html?id=${id}`;
-
   res.json({ message: "Channel registered!", channel, voteLink });
 });
 
@@ -78,7 +77,7 @@ app.post("/api/admin/declare-winner", (req, res) => {
 // Get past winners
 app.get("/winners", (req, res) => res.json(winners));
 
-// Set host channel
+// Set host channel (admin only)
 app.post("/api/admin/host", (req, res) => {
   if (!req.session.admin) return res.status(403).json({ error: "Unauthorized" });
   const { name, link } = req.body;
@@ -90,5 +89,6 @@ app.post("/api/admin/host", (req, res) => {
 // Get host channel
 app.get("/host", (req, res) => res.json(hostChannel));
 
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
