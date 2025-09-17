@@ -6,9 +6,8 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Simple in-memory DB (later replaced with db.json if you want persistence)
+// In-memory "database"
 let channels = [];
-let votes = {};
 let winners = [];
 let hostChannel = { name: "", link: "" };
 
@@ -24,9 +23,18 @@ app.post("/register", (req, res) => {
     return res.status(400).json({ error: "Name and link are required" });
   }
 
-  const channel = { id: Date.now(), name, link, about, votes: 0 };
+  const id = Date.now(); // Unique ID for each channel
+  const channel = { id, name, link, about, votes: 0 };
   channels.push(channel);
-  res.json({ message: "Channel registered!", channel });
+
+  // Generate vote link for frontend
+  const voteLink = `https://your-frontend-site.netlify.app/vote.html?id=${id}`;
+
+  res.json({
+    message: "Channel registered!",
+    channel,
+    voteLink
+  });
 });
 
 // Get all channels
@@ -34,13 +42,15 @@ app.get("/channels", (req, res) => {
   res.json(channels);
 });
 
-// Cast vote
+// Cast vote (1 vote total)
 app.post("/vote/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const channel = channels.find(c => c.id === id);
   if (!channel) {
     return res.status(404).json({ error: "Channel not found" });
   }
+
+  // Prevent multiple votes via voterId (frontend uses localStorage)
   channel.votes++;
   res.json({ message: "Vote added!", votes: channel.votes });
 });
