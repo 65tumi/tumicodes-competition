@@ -19,9 +19,7 @@ app.get("/", (req, res) => {
 // Register channel
 app.post("/register", (req, res) => {
   const { name, link, about } = req.body;
-  if (!name || !link) {
-    return res.status(400).json({ error: "Name and link are required" });
-  }
+  if (!name || !link) return res.status(400).json({ error: "Name and link required" });
 
   const id = Date.now(); // Unique ID for each channel
   const channel = { id, name, link, about, votes: 0 };
@@ -42,15 +40,12 @@ app.get("/channels", (req, res) => {
   res.json(channels);
 });
 
-// Cast vote (1 vote total)
+// Cast vote (no limit per user)
 app.post("/vote/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const channel = channels.find(c => c.id === id);
-  if (!channel) {
-    return res.status(404).json({ error: "Channel not found" });
-  }
+  if (!channel) return res.status(404).json({ error: "Channel not found" });
 
-  // Prevent multiple votes via voterId (frontend uses localStorage)
   channel.votes++;
   res.json({ message: "Vote added!", votes: channel.votes });
 });
@@ -59,9 +54,8 @@ app.post("/vote/:id", (req, res) => {
 app.post("/admin/declare-winner", (req, res) => {
   const { winnerId } = req.body;
   const channel = channels.find(c => c.id === winnerId);
-  if (!channel) {
-    return res.status(404).json({ error: "Winner not found" });
-  }
+  if (!channel) return res.status(404).json({ error: "Winner not found" });
+
   winners.push({
     id: channel.id,
     name: channel.name,
@@ -81,9 +75,7 @@ app.get("/winners", (req, res) => {
 // Set host channel (admin only)
 app.post("/admin/host", (req, res) => {
   const { name, link } = req.body;
-  if (!name || !link) {
-    return res.status(400).json({ error: "Host name and link required" });
-  }
+  if (!name || !link) return res.status(400).json({ error: "Host name and link required" });
   hostChannel = { name, link };
   res.json({ message: "Host channel updated", hostChannel });
 });
