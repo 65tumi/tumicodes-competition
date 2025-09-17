@@ -5,7 +5,7 @@ const session = require("express-session");
 
 const app = express();
 
-// CORS: allow requests from your Netlify frontend
+// Allow requests from your Netlify frontend
 app.use(cors({
   origin: "https://tumi-channels-competition.netlify.app",
   credentials: true
@@ -20,7 +20,7 @@ app.use(session({
   saveUninitialized: true,
 }));
 
-// In-memory database
+// In-memory "database"
 let channels = [];
 let winners = [];
 let hostChannel = { name: "", link: "" };
