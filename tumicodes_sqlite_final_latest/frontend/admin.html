@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Admin</title>
+<link rel="stylesheet" href="styles.css"></head><body>
+<header><h1>Admin Dashboard</h1></header>
+<main style="max-width:1100px;margin:20px auto">
+  <div id="loginCard" class="card">
+    <h2>Admin Login</h2>
+    <label>Username<input id="username"></label>
+    <label>Password<input id="password" type="password"></label>
+    <button id="loginBtn">Login</button>
+    <div id="loginMsg" style="margin-top:8px;color:gray"></div>
+  </div>
+
+  <div id="adminPanel" class="hidden">
+    <div class="card">
+      <h2>Host Channel (Displayed site-wide)</h2>
+      <label>Host Channel Name<input id="hostName" placeholder="TumiCodes Official"></label>
+      <label>Host Channel Link<input id="hostLink" placeholder="https://whatsapp.com/channel/..."></label>
+      <button id="setHostBtn">Set Host</button>
+    </div>
+
+    <div class="card">
+      <h2>Competition Controls</h2>
+      <label>Set Competition End Date & Time<input id="endDatetime" type="datetime-local"></label>
+      <button id="setEndBtn">Set End Date</button>
+      <button id="clearEndBtn" style="margin-left:8px">Clear End Date</button>
+      <div style="margin-top:8px">
+        <button id="resetBtn">Reset Competition (DELETE channels + votes + winner)</button>
+        <button id="exportBtn" style="margin-left:8px">Export CSV</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Registered Channels</h2>
+      <div id="channelsList">Loading channels...</div>
+    </div>
+    <div style="margin-top:12px"><button id="logoutBtn">Logout</button></div>
+  </div>
+</main>
+<footer>Admin only</footer>
+<script src="config.js"></script><script src="app.js"></script></body></html>
