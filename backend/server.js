@@ -4,7 +4,13 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 
 const app = express();
-app.use(cors({ origin: true, credentials: true }));
+
+// CORS: allow requests from your Netlify frontend
+app.use(cors({
+  origin: "https://tumi-channels-competition.netlify.app",
+  credentials: true
+}));
+
 app.use(bodyParser.json());
 
 // Session for admin
@@ -19,7 +25,7 @@ let channels = [];
 let winners = [];
 let hostChannel = { name: "", link: "" };
 
-// Root check
+// Root
 app.get("/", (req, res) => res.send("✅ Tumicodes Competition API running!"));
 
 // Register channel
@@ -31,7 +37,7 @@ app.post("/register", (req, res) => {
   const channel = { id, name, link, about, votes: 0 };
   channels.push(channel);
 
-  const voteLink = `https://your-frontend-site.netlify.app/vote.html?id=${id}`;
+  const voteLink = `https://tumi-channels-competition.netlify.app/vote.html?id=${id}`;
   res.json({ message: "Channel registered!", channel, voteLink });
 });
 
@@ -77,7 +83,7 @@ app.post("/api/admin/declare-winner", (req, res) => {
 // Get past winners
 app.get("/winners", (req, res) => res.json(winners));
 
-// Set host channel (admin only)
+// Set host channel
 app.post("/api/admin/host", (req, res) => {
   if (!req.session.admin) return res.status(403).json({ error: "Unauthorized" });
   const { name, link } = req.body;
