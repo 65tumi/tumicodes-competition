@@ -5,7 +5,7 @@ const session = require("express-session");
 
 const app = express();
 
-// Allow requests from your Netlify frontend
+// Allow Netlify frontend
 app.use(cors({
   origin: "https://tumi-channels-competition.netlify.app",
   credentials: true
@@ -13,19 +13,23 @@ app.use(cors({
 
 app.use(bodyParser.json());
 
-// Session for admin
+// Sessions for admin
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'tumicodesSecret123',
+  secret: process.env.SESSION_SECRET || "tumicodesSecret123",
   resave: false,
   saveUninitialized: true,
+  cookie: {
+    sameSite: "none",   // ✅ required for Netlify <-> Render
+    secure: true        // ✅ only send cookies over HTTPS
+  }
 }));
 
-// In-memory "database"
+// In-memory database
 let channels = [];
 let winners = [];
 let hostChannel = { name: "", link: "" };
 
-// Root
+// Root check
 app.get("/", (req, res) => res.send("✅ Tumicodes Competition API running!"));
 
 // Register channel
@@ -69,9 +73,10 @@ app.get("/api/admin/check", (req, res) => {
   res.json({ loggedIn: req.session.admin === true });
 });
 
-// Admin declare winner
+// Declare winner
 app.post("/api/admin/declare-winner", (req, res) => {
   if (!req.session.admin) return res.status(403).json({ error: "Unauthorized" });
+
   const { winnerId } = req.body;
   const channel = channels.find(c => c.id === winnerId);
   if (!channel) return res.status(404).json({ error: "Winner not found" });
@@ -80,14 +85,16 @@ app.post("/api/admin/declare-winner", (req, res) => {
   res.json({ message: "Winner declared", winner: channel });
 });
 
-// Get past winners
+// Past winners
 app.get("/winners", (req, res) => res.json(winners));
 
 // Set host channel
 app.post("/api/admin/host", (req, res) => {
   if (!req.session.admin) return res.status(403).json({ error: "Unauthorized" });
+
   const { name, link } = req.body;
   if (!name || !link) return res.status(400).json({ error: "Host name and link required" });
+
   hostChannel = { name, link };
   res.json({ message: "Host channel updated", hostChannel });
 });
