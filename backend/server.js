@@ -5,7 +5,10 @@ const session = require("express-session");
 
 const app = express();
 
-// Allow Netlify frontend
+// Trust proxy for secure cookies (important on Render)
+app.set("trust proxy", 1);
+
+// Allow Netlify frontend with credentials
 app.use(cors({
   origin: "https://tumi-channels-competition.netlify.app",
   credentials: true
@@ -14,17 +17,16 @@ app.use(cors({
 app.use(bodyParser.json());
 
 // Sessions for admin
-
 app.use(session({
   secret: process.env.SESSION_SECRET || "tumicodesSecret123",
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
+  proxy: true,
   cookie: {
     sameSite: "none",   // allow cross-site cookie
-    secure: true        // cookie only via https
+    secure: true        // only send over https
   }
 }));
-
 
 // In-memory database
 let channels = [];
