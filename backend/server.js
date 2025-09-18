@@ -14,15 +14,17 @@ app.use(cors({
 app.use(bodyParser.json());
 
 // Sessions for admin
+
 app.use(session({
   secret: process.env.SESSION_SECRET || "tumicodesSecret123",
   resave: false,
   saveUninitialized: true,
   cookie: {
-    sameSite: "none",   // ✅ required for Netlify <-> Render
-    secure: true        // ✅ only send cookies over HTTPS
+    sameSite: "none",   // allow cross-site cookie
+    secure: true        // cookie only via https
   }
 }));
+
 
 // In-memory database
 let channels = [];
